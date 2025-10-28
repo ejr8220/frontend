@@ -1,0 +1,27 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.layout-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.sidebar-wrapper {
+  width: 240px;
+  transition: width 0.3s ease;
+  overflow: hidden;
+
+  &.collapsed {
+    width: 0px;
+  }
+}
+
+.content {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+}   

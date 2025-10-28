@@ -1,0 +1,30 @@
+<ejs-grid
+  [dataSource]="dataSource"
+  [toolbar]="toolbar"
+  [allowPaging]="allowPaging"
+  [height]="height"
+  [filterSettings]="allowFiltering ? filterSettings : null"
+  [selectionSettings]="selectionSettings"
+  (toolbarClick)="handleToolbarClick($event)">
+  <e-columns>
+    <e-column type="checkbox" width="50"></e-column>
+
+    <ng-container *ngFor="let col of columns">
+      <e-column
+        [field]="col.field"
+        [headerText]="col.headerText"
+        [width]="col.width"
+        [textAlign]="col.textAlign"
+        [format]="col.format"
+        [type]="col.type">
+      </e-column>
+    </ng-container>
+
+    <e-column headerText="Acciones" width="100" textAlign="Center">
+      <ng-template #template let-data>
+        <button class="action-btn edit" (click)="editRow(data)"></button>
+        <button class="action-btn delete" (click)="confirmDelete(data)"></button>
+      </ng-template>
+    </e-column>
+  </e-columns>
+</ejs-grid>

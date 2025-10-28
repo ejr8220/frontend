@@ -1,0 +1,20 @@
+<ejs-toast #toast [position]="position" (created)="onToastCreated(toast)"></ejs-toast>
+
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-title">Iniciar Sesión</div>
+
+    <form [formGroup]="form" (ngSubmit)="login()">
+      <ejs-textbox placeholder="Usuario" formControlName="username" floatLabelType="Auto"></ejs-textbox>
+      <ejs-textbox placeholder="Contraseña" formControlName="password" type="password" floatLabelType="Auto"></ejs-textbox>
+
+      <button ejs-button cssClass="e-primary" type="submit" [disabled]="form.invalid">Ingresar</button>
+
+      <div class="recover-link">
+        <a (click)="recover()">¿Olvidaste tu contraseña?</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+
