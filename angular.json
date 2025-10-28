@@ -72,10 +72,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "syncfusion-auth-app:build:production"
+              "buildTarget": "syncfusion-auth-app:build:production"
             },
             "development": {
-              "browserTarget": "syncfusion-auth-app:build:development"
+              "buildTarget": "syncfusion-auth-app:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -83,7 +83,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "syncfusion-auth-app:build"
+            "buildTarget": "syncfusion-auth-app:build"
           }
         },
         "test": {
