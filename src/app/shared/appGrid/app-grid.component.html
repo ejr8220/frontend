@@ -1,30 +1,50 @@
-<ejs-grid
-  [dataSource]="dataSource"
-  [toolbar]="toolbar"
-  [allowPaging]="allowPaging"
-  [height]="height"
-  [filterSettings]="allowFiltering ? filterSettings : null"
-  [selectionSettings]="selectionSettings"
-  (toolbarClick)="handleToolbarClick($event)">
-  <e-columns>
-    <e-column type="checkbox" width="50"></e-column>
+<div *ngIf="dataSource" class="grid-wrapper">
+  <ejs-grid
+    [dataSource]="dataSource"
+    [toolbar]="toolbar"
+    [allowPaging]="allowPaging"
+    [pageSettings]="pageSettings"
+    [height]="height"
+    [allowFiltering]="allowFiltering"
+    [filterSettings]="filterSettings"
+    (toolbarClick)="handleToolbarClick($event)">
+    <e-columns>
+      <ng-container *ngFor="let col of columns">
+        <e-column
+          [field]="col.field"
+          [headerText]="col.headerText"
+          [width]="col.width"
+          [textAlign]="col.textAlign"
+          [visible]="col.visible !== false">
+        </e-column>
+      </ng-container>
 
-    <ng-container *ngFor="let col of columns">
-      <e-column
-        [field]="col.field"
-        [headerText]="col.headerText"
-        [width]="col.width"
-        [textAlign]="col.textAlign"
-        [format]="col.format"
-        [type]="col.type">
+      <e-column headerText="Acciones" width="150" textAlign="Center">
+        <ng-template #template let-data>
+          <button class="action-btn edit" (click)="editRow(data)" title="Editar">✏️</button>
+          <button class="action-btn delete" (click)="confirmDelete(data)" title="Eliminar">🗑️</button>
+        </ng-template>
       </e-column>
-    </ng-container>
+    </e-columns>
+  </ejs-grid>
+</div>
 
-    <e-column headerText="Acciones" width="100" textAlign="Center">
-      <ng-template #template let-data>
-        <button class="action-btn edit" (click)="editRow(data)"></button>
-        <button class="action-btn delete" (click)="confirmDelete(data)"></button>
-      </ng-template>
-    </e-column>
-  </e-columns>
-</ejs-grid>
+<div *ngIf="!dataSource" class="loading-message">
+  Cargando datos...
+</div>
+
+<!-- Modal de confirmación de eliminación -->
+<ejs-dialog
+  #deleteDialog
+  [visible]="deleteDialogVisible"
+  [header]="'Confirmar eliminación'"
+  [buttons]="[{buttonModel: {content: 'Sí', isPrimary: true}, click: onDeleteConfirm}, {buttonModel: {content: 'No'}, click: onDeleteCancel}]"
+  [width]="'400px'"
+  [isModal]="true">
+  <ng-template #content>
+    <p>¿Desea eliminar este registro?</p>
+    <p *ngIf="rowToDelete" class="record-info">
+      <strong>{{ rowToDelete.legalName }}</strong>
+    </p>
+  </ng-template>
+</ejs-dialog>

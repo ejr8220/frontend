@@ -7,7 +7,33 @@
   </div>
 
   <div class="right-section">
+    <button class="company-selector" (click)="openCompanySelector()" title="Seleccionar empresa">
+      🏢 {{ currentCompany?.name || 'Seleccionar empresa' }}
+    </button>
     <span class="user-info">Edgar Pin</span>
-    <!-- Puedes agregar avatar o dropdown aquí -->
+    <button class="logout-btn" (click)="logout()" title="Cerrar sesión">🚪</button>
   </div>
 </header>
+
+<!-- Modal de selección de empresa -->
+<ejs-dialog
+  #companyDialog
+  [visible]="showCompanyDialog"
+  [header]="'Seleccionar Empresa'"
+  [width]="'500px'"
+  [isModal]="true"
+  (close)="closeDialog()">
+  <div class="company-list">
+    @for (company of allCompanies; track company.id) {
+      <div class="company-item" (click)="selectCompany(company)">
+        <strong>{{ company.legalName }}</strong>
+        <span class="company-id">{{ company.identificationNumber }}</span>
+      </div>
+    }
+    @if (allCompanies.length === 0) {
+      <div class="no-companies">
+        No hay empresas disponibles
+      </div>
+    }
+  </div>
+</ejs-dialog>

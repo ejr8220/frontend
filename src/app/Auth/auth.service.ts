@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Observable, tap } from 'rxjs';
+import { CompanySessionService } from '../shared/company-session.service';
 
 export interface LoginRequest {
   username: string;
@@ -50,6 +51,7 @@ export interface LoginResponse {
 })
 export class AuthService {
   private http = inject(HttpClient);
+  private companySessionService = inject(CompanySessionService);
   private apiUrl = `${environment.api.url}${environment.api.pathAuth}`;
 
   login(payload: LoginRequest): Observable<LoginResponse> {
@@ -80,6 +82,7 @@ export class AuthService {
     document.cookie = 'token=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;';
     document.cookie = 'expiresAt=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;';
     sessionStorage.removeItem('user');
+    this.companySessionService.clearCompany();
   }
 
   private getCookie(name: string): string | null {

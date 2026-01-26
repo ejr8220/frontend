@@ -1,0 +1,199 @@
+@if (!isLoading) {
+<div class="crud-container">
+  <div class="crud-header">
+    <h2>{{ isEditMode ? 'Editar Cuenta' : 'Nueva Cuenta' }}</h2>
+  </div>
+
+  <form [formGroup]="chartAccountForm" class="form-content">
+    <div class="form-layout-with-analysis">
+      <!-- Columna izquierda: Formulario original -->
+      <div class="form-container">
+        <!-- Fila 1: Código y Descripción -->
+        <div class="form-row">
+          <div class="form-group">
+            <label>Código *</label>
+            <ejs-textbox
+              formControlName="code"
+              [readonly]="true"
+              placeholder="Ingrese el código">
+            </ejs-textbox>
+          </div>
+          <div class="form-group">
+            <label>Descripción *</label>
+            <ejs-textbox
+              formControlName="description"
+              placeholder="Ingrese la descripción">
+            </ejs-textbox>
+          </div>
+        </div>
+
+        <!-- Fila 2: Cuenta Padre y Signo -->
+        <div class="form-row">
+          <div class="form-group">
+            <label>Cuenta Padre</label>
+            @if (isFromParent && parentAccountDisplay) {
+              <ejs-textbox
+                [value]="parentAccountDisplay"
+                [readonly]="true"
+                placeholder="Cuenta padre">
+              </ejs-textbox>
+            } @else {
+              <ejs-textbox
+                formControlName="parentId"
+                [readonly]="true"
+                placeholder="ID de cuenta padre (opcional)">
+              </ejs-textbox>
+            }
+          </div>
+          <div class="form-group">
+            <label>Signo Deudor</label>
+            <ejs-textbox
+              type="number"
+              formControlName="debtorSign"
+              [readonly]="true"
+              placeholder="1 o -1">
+            </ejs-textbox>
+          </div>
+        </div>
+
+        <!-- Fila 3: Checkboxes -->
+        <div class="form-row">
+          <div class="checkbox-group">
+            <input
+              type="checkbox"
+              id="isDetailAccount"
+              formControlName="isDetailAccount">
+            <label for="isDetailAccount">Es Cuenta de Detalle</label>
+          </div>
+          <div class="checkbox-group">
+            <input
+              type="checkbox"
+              id="isActive"
+              formControlName="isActive">
+            <label for="isActive">Activo</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Columna derecha: Análisis -->
+      <div class="analysis-panel">
+        <h3 class="panel-title">Análisis</h3>
+
+        <div class="analysis-item">
+          <div class="checkbox-group">
+            <input
+              type="checkbox"
+              id="isAuxRequired"
+              formControlName="isAuxRequired">
+            <label for="isAuxRequired">Análisis por ficha</label>
+          </div>
+          @if (showAuxiliaryTypeDropdown) {
+            <div class="form-group dropdown-inline">
+              <ejs-dropdownlist
+                formControlName="auxiliaryTypeId"
+                [dataSource]="auxiliaryTypes"
+                [fields]="auxiliaryTypeFields"
+                placeholder="Seleccione tipo auxiliar">
+              </ejs-dropdownlist>
+            </div>
+          }
+        </div>
+
+        <div class="checkbox-group">
+          <input
+            type="checkbox"
+            id="isDocumentRequired"
+            formControlName="isDocumentRequired">
+          <label for="isDocumentRequired">Análisis por documento</label>
+        </div>
+
+        <div class="checkbox-group">
+          <input
+            type="checkbox"
+            id="isCostCenterRequired"
+            formControlName="isCostCenterRequired">
+          <label for="isCostCenterRequired">Análisis por centro de costo</label>
+        </div>
+
+        <div class="analysis-item">
+          <div class="checkbox-group">
+            <input
+              type="checkbox"
+              id="isClassifier1Required"
+              formControlName="isClassifier1Required">
+            <label for="isClassifier1Required">Análisis por clasificador(1)</label>
+          </div>
+          @if (showClassifier1Dropdown) {
+            <div class="form-group dropdown-inline">
+              <ejs-dropdownlist
+                formControlName="classifier1TypeId"
+                [dataSource]="classifier1Types"
+                [fields]="auxiliaryTypeFields"
+                placeholder="Seleccione clasificador 1">
+              </ejs-dropdownlist>
+            </div>
+          }
+        </div>
+
+        <div class="analysis-item">
+          <div class="checkbox-group">
+            <input
+              type="checkbox"
+              id="isClassifier2Required"
+              formControlName="isClassifier2Required">
+            <label for="isClassifier2Required">Análisis por clasificador(2)</label>
+          </div>
+          @if (showClassifier2Dropdown) {
+            <div class="form-group dropdown-inline">
+              <ejs-dropdownlist
+                formControlName="classifier2TypeId"
+                [dataSource]="classifier2Types"
+                [fields]="auxiliaryTypeFields"
+                placeholder="Seleccione clasificador 2">
+              </ejs-dropdownlist>
+            </div>
+          }
+        </div>
+
+        <div class="checkbox-group">
+          <input
+            type="checkbox"
+            id="isBankReconciliation"
+            formControlName="isBankReconciliation">
+          <label for="isBankReconciliation">Conciliación bancaria</label>
+        </div>
+
+        <div class="checkbox-group">
+          <input
+            type="checkbox"
+            id="isReferenceCurrencyEntry"
+            formControlName="isReferenceCurrencyEntry">
+          <label for="isReferenceCurrencyEntry">Ingreso en moneda referencial</label>
+        </div>
+
+        <div class="checkbox-group">
+          <input
+            type="checkbox"
+            id="isExchangeRateAdjustment"
+            formControlName="isExchangeRateAdjustment">
+          <label for="isExchangeRateAdjustment">Ajuste por diferencia de cambio</label>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <!-- Botones flotantes -->
+  <div class="floating-actions">
+    <button type="button" class="btn-cancel" (click)="onCancel()">
+      Cancelar
+    </button>
+    <button type="button" class="btn-select" (click)="onSubmit()">
+      {{ isEditMode ? 'Grabar' : 'Guardar' }}
+    </button>
+  </div>
+</div>
+} @else {
+<div class="loading-spinner">
+  <p>Cargando...</p>
+</div>
+}

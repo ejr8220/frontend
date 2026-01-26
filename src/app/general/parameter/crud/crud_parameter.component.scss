@@ -1,0 +1,268 @@
+.crud-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: calc(100vh - 64px);
+  padding: 12px 24px 80px;
+  box-sizing: border-box;
+  overflow: hidden;
+
+  .crud-header {
+    margin-bottom: 20px;
+
+    h2 {
+      font-size: 24px;
+      font-weight: 600;
+      color: #333;
+      margin: 0;
+    }
+  }
+
+  .form-content {
+    flex: 1;
+    overflow-y: auto;
+  }
+}
+
+.form-container {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+
+  label {
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #333;
+    font-size: 13px;
+  }
+
+  ejs-textbox {
+    width: 100%;
+  }
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 0;
+
+  input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #0078d4;
+  }
+
+  label {
+    margin: 0;
+    cursor: pointer;
+    font-weight: 500;
+    color: #333;
+    font-size: 13px;
+  }
+}
+
+.details-frame {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 16px;
+  margin-top: 24px;
+
+  legend {
+    padding: 0 8px;
+    font-weight: 600;
+    font-size: 13px;
+    color: #333;
+  }
+}
+
+.details-toolbar {
+  margin-bottom: 16px;
+  display: flex;
+  gap: 8px;
+}
+
+.btn-primary {
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: none;
+  background: #0078d4;
+  color: white;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.3s;
+
+  &:hover {
+    background: #1084dd;
+  }
+}
+
+.detail-form {
+  background: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 16px;
+  margin-bottom: 16px;
+
+  .form-row {
+    grid-template-columns: 1fr 1fr 1fr;
+    margin-bottom: 12px;
+  }
+}
+
+.detail-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.btn-success {
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: none;
+  background: #107c10;
+  color: white;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.3s;
+
+  &:hover {
+    background: #109c10;
+  }
+}
+
+.btn-cancel {
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: 1.5px solid #d0d0d0;
+  background: #f5f5f5;
+  color: #333;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.3s;
+
+  &:hover {
+    background: #e8e8e8;
+  }
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-edit {
+  background: transparent;
+  color: #0078d4;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.3s;
+
+  &:hover {
+    background: rgba(0, 120, 212, 0.1);
+  }
+}
+
+.btn-delete {
+  background: transparent;
+  color: #c50f1f;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.3s;
+
+  &:hover {
+    background: rgba(197, 15, 31, 0.1);
+  }
+}
+
+.floating-actions {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-end;
+  padding: 12px 24px;
+  background: rgba(255,255,255,0.98);
+  border-top: 1px solid #e0e0e0;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.06);
+  z-index: 50;
+  flex-shrink: 0;
+
+  .btn-select {
+    background: linear-gradient(135deg, #0078d4 0%, #005a96 100%);
+    border: none;
+    color: white;
+    box-shadow: 0 2px 8px rgba(0, 120, 212, 0.3);
+
+    &:hover:not(:disabled) {
+      background: linear-gradient(135deg, #1084dd 0%, #0066a1 100%);
+      box-shadow: 0 4px 16px rgba(0, 120, 212, 0.4);
+      transform: translateY(-2px);
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(0);
+      box-shadow: 0 2px 4px rgba(0, 120, 212, 0.3);
+    }
+
+    &:focus-visible:not(:disabled) {
+      box-shadow: 0 2px 8px rgba(0, 120, 212, 0.3), 0 0 0 3px rgba(0, 120, 212, 0.2);
+    }
+  }
+}
+
+.loading-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+
+  p {
+    font-size: 16px;
+    color: #666;
+  }
+}
+
+::ng-deep {
+  .e-grid {
+    border: 1px solid #ddd;
+
+    .e-gridheader {
+      background: #f5f5f5;
+    }
+
+    .e-rowcell {
+      padding: 6px 8px;
+    }
+  }
+}

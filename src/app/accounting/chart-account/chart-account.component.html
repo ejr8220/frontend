@@ -1,0 +1,65 @@
+<div class="container">
+  @if (!isLoading) {
+    <h1>Plan de Cuentas</h1>
+
+    <ejs-grid
+      #grid
+      [dataSource]="chartAccounts"
+      [toolbar]="toolbar"
+      [allowPaging]="true"
+      [pageSettings]="{pageSize: 20}"
+      [allowSorting]="true"
+      [allowExcelExport]="true"
+      [allowPdfExport]="true"
+      (toolbarClick)="onToolbarClick($event)"
+      (actionBegin)="onActionBegin($event)"
+      (actionFailure)="onActionFailure($event)">
+      
+      <e-columns>
+        <e-column headerText="Código" width="100" [template]="codeTemplate"></e-column>
+        <e-column field="description" headerText="Descripción" width="300"></e-column>
+        <e-column field="level" headerText="Nivel" width="80" textAlign="Right"></e-column>
+        <e-column field="isDetailAccount" headerText="Cuenta Detalle" width="120" [displayAsCheckBox]="true"></e-column>
+        <e-column field="isAuxRequired" headerText="Requiere Auxiliar" width="120" [displayAsCheckBox]="true"></e-column>
+        <e-column field="isCostCenterRequired" headerText="Requiere Centro Costo" width="150" [displayAsCheckBox]="true"></e-column>
+        <e-column field="isActive" headerText="Activo" width="80" [displayAsCheckBox]="true"></e-column>
+        <e-column headerText="Acciones" width="120" [template]="actionTemplate"></e-column>
+      </e-columns>
+
+      <ng-template #codeTemplate let-data>
+        <div class="code-cell" [style.paddingLeft]="getIndentation(data)">
+          @if (hasChildren(data.id)) {
+            <button 
+              class="expand-btn" 
+              (click)="toggleExpand(data.id)"
+              [title]="isExpanded(data.id) ? 'Contraer' : 'Expandir'">
+              {{ isExpanded(data.id) ? '▼' : '▶' }}
+            </button>
+          } @else {
+            <span class="expand-placeholder"></span>
+          }
+          <span class="code">{{ data.code }}</span>
+        </div>
+      </ng-template>
+
+      <ng-template #actionTemplate let-data>
+        <div class="action-buttons">
+          <button class="btn-add-child" (click)="addChildAccount(data)" title="Agregar Subcuenta">
+            ➕
+          </button>
+          <button class="btn-edit" (click)="editChartAccount(data)" title="Editar">
+            ✏️
+          </button>
+          <button class="btn-delete" (click)="deleteChartAccount(data)" title="Eliminar">
+            🗑️
+          </button>
+        </div>
+      </ng-template>
+    </ejs-grid>
+  } @else {
+    <div class="loading-spinner">
+      <p>Cargando...</p>
+    </div>
+  }
+</div>
+

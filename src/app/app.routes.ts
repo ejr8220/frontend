@@ -1,8 +1,14 @@
 import { Routes } from '@angular/router';
 import { AuthGuard } from './Auth/auth.guard';
 import { generalRoutes } from './general/general.routes';
+import { accountingRoutes } from './accounting/accounting.routes';
 
 export const routes: Routes = [
+  {
+    path: '',
+    redirectTo: 'login',
+    pathMatch: 'full'
+  },
   {
     path: 'login',
     loadComponent: () =>
@@ -19,6 +25,16 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./general/dashboard/dashboard.component').then(m => m.DashboardComponent)
       },
+      {
+        path: 'general',
+        canActivate: [AuthGuard],
+        children: generalRoutes
+      },
+      {
+        path: 'accounting',
+        canActivate: [AuthGuard],
+        children: accountingRoutes
+      }
     ]
   },
   {

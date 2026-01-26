@@ -1,0 +1,41 @@
+<div class="container">
+  @if (!isLoading) {
+    <h1>Parámetros</h1>
+
+    <ejs-grid
+      #grid
+      [dataSource]="parameters"
+      [toolbar]="toolbar"
+      [allowPaging]="true"
+      [pageSettings]="{pageSize: 20}"
+      [allowSorting]="true"
+      [allowExcelExport]="true"
+      [allowPdfExport]="true"
+      (toolbarClick)="onToolbarClick($event)"
+      (actionBegin)="onActionBegin($event)"
+      (actionFailure)="onActionFailure($event)">
+      
+      <e-columns>
+        <e-column field="code" headerText="Código" width="200"></e-column>
+        <e-column field="name" headerText="Nombre" width="300"></e-column>
+        <e-column field="isGlobal" headerText="Global" width="100" [displayAsCheckBox]="true"></e-column>
+        <e-column headerText="Acciones" width="120" [template]="actionTemplate"></e-column>
+      </e-columns>
+
+      <ng-template #actionTemplate let-data>
+        <div class="action-buttons">
+          <button class="btn-edit" (click)="editParameter(data)" title="Editar">
+            ✏️
+          </button>
+          <button class="btn-delete" (click)="deleteParameter(data)" title="Eliminar">
+            🗑️
+          </button>
+        </div>
+      </ng-template>
+    </ejs-grid>
+  } @else {
+    <div class="loading-spinner">
+      <p>Cargando...</p>
+    </div>
+  }
+</div>

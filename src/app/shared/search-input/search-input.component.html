@@ -1,0 +1,51 @@
+<div class="search-input-wrapper">
+  <div class="search-input-container">
+    <ejs-textbox
+      [(ngModel)]="searchValue"
+      [placeholder]="placeholder"
+      class="search-textbox">
+    </ejs-textbox>
+    <button class="search-button" (click)="onButtonClick($event)" [title]="searchValue.trim() ? 'Limpiar' : 'Buscar'">
+      {{ getButtonIcon() }}
+    </button>
+  </div>
+
+  <!-- Modal de búsqueda -->
+  <ejs-dialog
+    #gridSearchDialog
+    [visible]="showGridSearch"
+    [width]="'900px'"
+    [height]="'600px'"
+    [isModal]="true"
+    [allowDragging]="true"
+    [position]="{ X: 'center', Y: 'center' }"
+    header=""
+    [footerTemplate]="dialogFooter"
+    (close)="onGridSearchCancel()">
+    @if (showGridSearch && searchConfig) {
+    <div class="grid-search-wrapper" style="padding: 8px; height: 100%; display: flex; flex-direction: column;">
+      <app-grid-search
+        #gridSearch
+        [columns]="searchConfig.columns"
+        [method]="searchConfig.method"
+        [params]="searchConfig.params"
+        [title]="searchConfig.title || 'Registros Disponibles'"
+        (onSelect)="onGridSearchSelect($event)"
+        (onCancel)="onGridSearchCancel()">
+      </app-grid-search>
+    </div>
+    }
+  </ejs-dialog>
+
+  <!-- Template para el footer del dialog -->
+  <ng-template #dialogFooter>
+    <div class="dialog-footer">
+      <button type="button" class="btn-cancel" (click)="onGridSearchCancel()">
+        Cancelar
+      </button>
+      <button type="button" class="btn-select" (click)="selectGridRecord()">
+        Seleccionar
+      </button>
+    </div>
+  </ng-template>
+</div>

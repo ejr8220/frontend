@@ -50,7 +50,7 @@ export class LoginComponent {
     console.log('Login successful');
     this.router.navigate(['/dashboard']);
     console.log('Navigated to /dashboard');
-    /*const { username, password } = this.form.value;
+    const { username, password } = this.form.value;
     const url = `${environment.api.url}${environment.api.pathAuth}`;
 
     this.http.post<any>(url, { username, password }).subscribe({
@@ -65,7 +65,7 @@ export class LoginComponent {
         this.showToast('Credenciales incorrectas');
         
       }
-    });*/
+    });
   }
 
   recover(): void {

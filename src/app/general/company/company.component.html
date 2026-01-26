@@ -1,0 +1,19 @@
+<div class="company-container">
+  <h1>Listado de Empresas</h1>
+  
+  <app-grid 
+    #companyGrid
+    [toolbar]="toolbar"
+    [columns]="columns"
+    [urlData]="urlGetAll"
+    [urlEdit]="urlEdit"
+    [urlDelete]="urlDelete"
+    [height]="'600px'"
+    [allowPaging]="true"
+    [allowFiltering]="true"
+    (onAdd)="onAdd()"
+    (onEdit)="onEdit($event)"
+    (onDelete)="onDelete($event)"
+    (onRefresh)="onRefresh()">
+  </app-grid>
+</div>

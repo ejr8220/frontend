@@ -1,0 +1,144 @@
+.search-input-wrapper {
+  width: 100%;
+}
+
+.search-input-container {
+  position: relative;
+  display: flex;
+  width: 100%;
+  align-items: center;
+
+  .search-textbox {
+    flex: 1;
+    padding-right: 42px !important;
+  }
+
+  .search-button {
+    position: absolute;
+    right: 2px;
+    background: transparent;
+    border: none;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    border-radius: 2px;
+    color: #666;
+
+    &:hover {
+      color: #0078d4;
+      background: rgba(0, 120, 212, 0.1);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+}
+
+::ng-deep {
+  .e-dialog {
+    &.grid-search-dialog {
+      .e-dlg-content {
+        padding: 0 !important;
+        overflow: visible !important;
+        height: calc(100% - 60px) !important;
+        display: flex;
+        flex-direction: column;
+      }
+    }
+  }
+}
+
+.grid-search-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+
+  app-grid-search {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+}
+
+.dialog-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-end;
+  padding: 8px 0 0 0;
+  border-top: 1px solid #e0e0e0;
+  flex-shrink: 0;
+}
+
+.btn-select,
+.btn-cancel {
+  flex-shrink: 0;
+  min-width: auto;
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  outline: none;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.btn-select {
+  background: linear-gradient(135deg, #0078d4 0%, #005a96 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(0, 120, 212, 0.3);
+
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, #1084dd 0%, #0066a1 100%);
+    box-shadow: 0 4px 16px rgba(0, 120, 212, 0.4);
+    transform: translateY(-2px);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 120, 212, 0.3);
+  }
+
+  &:focus-visible:not(:disabled) {
+    box-shadow: 0 2px 8px rgba(0, 120, 212, 0.3), 0 0 0 3px rgba(0, 120, 212, 0.2);
+  }
+}
+
+.btn-cancel {
+  background: #f5f5f5;
+  border: 1.5px solid #d0d0d0;
+  color: #333;
+
+  &:hover:not(:disabled) {
+    background: #e8e8e8;
+    border-color: #b0b0b0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    background: #f0f0f0;
+  }
+
+  &:focus-visible:not(:disabled) {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1), 0 0 0 3px rgba(0, 0, 0, 0.1);
+  }
+}

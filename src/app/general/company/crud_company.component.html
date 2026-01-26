@@ -1,0 +1,323 @@
+@if (!isLoading) {
+<div class="crud-container">
+  <div class="crud-header">
+    <h2>{{ isEditMode ? 'Editar Empresa' : 'Nueva Empresa' }}</h2>
+  </div>
+
+  <!-- Tabs simples -->
+  <div class="tabs-wrapper">
+    <div class="tabs-header">
+      <button 
+        class="tab-button" 
+        [class.active]="activeTab === 'general'"
+        (click)="activateTab('general')">
+        Datos Generales
+      </button>
+      <button 
+        class="tab-button" 
+        [class.active]="activeTab === 'branches'"
+        (click)="activateTab('branches')">
+        Sucursales
+      </button>
+    </div>
+
+    <!-- Tab 1: Datos Generales -->
+    @if (activeTab === 'general') {
+    <div class="tab-content">
+      <form [formGroup]="companyForm">
+        <div class="form-container">
+          <!-- Fila 1: Tipo Identificación y Número Identificación -->
+          <div class="form-row">
+            <div class="form-group">
+              <label>Tipo Identificación *</label>
+              <ejs-dropdownlist
+                formControlName="identificationTypeId"
+                [dataSource]="identificationTypes"
+                [fields]="{text: 'description', value: 'id'}"
+                placeholder="Seleccionar"
+                (change)="onIdentificationTypeChange($event)">
+              </ejs-dropdownlist>
+            </div>
+            <div class="form-group">
+              <label>Número Identificación *</label>
+              <ejs-textbox
+                formControlName="identificationNumber"
+                placeholder="Ingrese el número">
+              </ejs-textbox>
+            </div>
+          </div>
+
+          <!-- Fila 2: Razón Social y Nombre Comercial -->
+          <div class="form-row">
+            <div class="form-group">
+              <label>Razón Social *</label>
+              <ejs-textbox
+                formControlName="legalName"
+                placeholder="Ingrese la razón social">
+              </ejs-textbox>
+            </div>
+            <div class="form-group">
+              <label>Nombre Comercial *</label>
+              <ejs-textbox
+                formControlName="tradeName"
+                placeholder="Ingrese el nombre comercial">
+              </ejs-textbox>
+            </div>
+          </div>
+
+          <!-- Fila 3: Dirección -->
+          <div class="form-row">
+            <div class="form-group full-width">
+              <label>Dirección *</label>
+              <ejs-textbox
+                formControlName="address"
+                placeholder="Ingrese la dirección">
+              </ejs-textbox>
+            </div>
+          </div>
+
+          <!-- Fila 4: Email y Teléfono -->
+          <div class="form-row">
+            <div class="form-group">
+              <label>Email *</label>
+              <ejs-textbox
+                type="email"
+                formControlName="email"
+                placeholder="Ingrese el email">
+              </ejs-textbox>
+            </div>
+            <div class="form-group">
+              <label>Teléfono *</label>
+              <ejs-textbox
+                formControlName="phoneNumber"
+                placeholder="Ingrese el teléfono">
+              </ejs-textbox>
+            </div>
+          </div>
+
+          <!-- Fila 5: País, Provincia, Ciudad -->
+          <div class="form-row three-columns">
+            <div class="form-group">
+              <label>País *</label>
+              <app-search-input
+                [searchConfig]="countrySearchConfig"
+                [displayField]="'name'"
+                [initialValue]="selectedCountry"
+                placeholder="Buscar país..."
+                (selectedField)="onCountrySelect($event)"
+                (clearField)="onCountryClear()">
+              </app-search-input>
+            </div>
+            <div class="form-group">
+              <label>Provincia *</label>
+              @if (provinceSearchConfig) {
+                <app-search-input
+                  [searchConfig]="provinceSearchConfig"
+                  [displayField]="'name'"
+                  [initialValue]="selectedProvince"
+                  placeholder="Buscar provincia..."
+                  (selectedField)="onProvinceSelect($event)"
+                  (clearField)="onProvinceClear()">
+                </app-search-input>
+              }
+              @else {
+                <ejs-textbox placeholder="Seleccione un país primero" [enabled]="false"></ejs-textbox>
+              }
+            </div>
+            <div class="form-group">
+              <label>Ciudad *</label>
+              @if (companyForm.get('provinceId')?.value && citySearchConfig) {
+                <app-search-input
+                  [searchConfig]="citySearchConfig"
+                  [displayField]="'name'"
+                  [initialValue]="selectedCity"
+                  placeholder="Buscar ciudad..."
+                  (selectedField)="onCitySelect($event)"
+                  (clearField)="onCityClear()">
+                </app-search-input>
+              }
+              @else {
+                <ejs-textbox placeholder="Seleccione una provincia primero" [enabled]="false"></ejs-textbox>
+              }
+            </div>
+          </div>
+
+          <!-- Frame: Legales -->
+          <fieldset class="legales-frame">
+            <legend>Información Legal</legend>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Representante Legal *</label>
+                <ejs-textbox
+                  formControlName="legalRepresentativeName"
+                  placeholder="Nombre del representante">
+                </ejs-textbox>
+              </div>
+              <div class="form-group">
+                <label>Identificación Rep. Legal *</label>
+                <ejs-textbox
+                  formControlName="legalRepresentativeIdentification"
+                  placeholder="Identificación del representante">
+                </ejs-textbox>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Contador *</label>
+                <ejs-textbox
+                  formControlName="accountantName"
+                  placeholder="Nombre del contador">
+                </ejs-textbox>
+              </div>
+              <div class="form-group">
+                <label>Identificación Contador *</label>
+                <ejs-textbox
+                  formControlName="accountantIdentification"
+                  placeholder="Identificación del contador">
+                </ejs-textbox>
+              </div>
+            </div>
+          </fieldset>
+
+        </div>
+      </form>
+    </div>
+    }
+
+    <!-- Tab 2: Sucursales -->
+    @if (activeTab === 'branches') {
+    <div class="tab-content">
+      <div class="branches-container">
+        <div class="branches-toolbar">
+          <ejs-button cssClass="e-primary" (click)="isAddingBranch = !isAddingBranch">
+            {{ isAddingBranch ? 'Cancelar' : 'Agregar Sucursal' }}
+          </ejs-button>
+        </div>
+
+        <!-- Formulario de agregar/editar sucursal -->
+        @if (isAddingBranch) {
+        <div class="branch-form">
+          <form [formGroup]="branchForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Nombre Sucursal *</label>
+                <ejs-textbox
+                  formControlName="name"
+                  placeholder="Nombre de la sucursal">
+                </ejs-textbox>
+              </div>
+              <div class="form-group">
+                <label>Ciudad *</label>
+                <ejs-dropdownlist
+                  formControlName="cityId"
+                  [dataSource]="cities"
+                  [fields]="{ text: 'name', value: 'id' }"
+                  placeholder="Seleccionar ciudad">
+                </ejs-dropdownlist>
+              </div>
+            </div>
+            <div class="branch-buttons">
+              <ejs-button cssClass="e-primary" 
+                (click)="editingBranchId ? saveBranch() : addBranch()">
+                {{ editingBranchId ? 'Guardar' : 'Agregar' }}
+              </ejs-button>
+              <ejs-button (click)="cancelBranch()">Cancelar</ejs-button>
+            </div>
+          </form>
+        </div>
+        }
+
+        <!-- Tabla de sucursales -->
+        <div class="branches-table">
+          <!-- Edit templates -->
+          <ng-template #countryEditTemplate let-data>
+            <app-search-input
+              [searchConfig]="countrySearchConfig"
+              [displayField]="'name'"
+              [initialValue]="data.country"
+              placeholder="Buscar país..."
+              (selectedField)="data.country = $event; data.countryId = $event?.id">
+            </app-search-input>
+          </ng-template>
+
+          <ng-template #provinceEditTemplate let-data>
+            <app-search-input
+              *ngIf="data.country?.id || data.countryId"
+              [searchConfig]="{
+                columns: [
+                  { field: 'name', headerText: 'Provincia', width: 200 },
+                  { field: 'isoCode', headerText: 'Código', width: 100 }
+                ],
+                method: environment.api.url + '/api/general/Province/getProvinceByCountry/' + (data.country?.id || data.countryId),
+                params: {},
+                title: 'Seleccione la provincia'
+              }"
+              [displayField]="'name'"
+              [initialValue]="data.province"
+              placeholder="Buscar provincia..."
+              (selectedField)="data.province = $event; data.provinceId = $event?.id">
+            </app-search-input>
+            <ejs-textbox *ngIf="!data.country?.id && !data.countryId" placeholder="Seleccione un país primero" [enabled]="false"></ejs-textbox>
+          </ng-template>
+
+          <ng-template #cityEditTemplate let-data>
+            <app-search-input
+              *ngIf="data.province?.id || data.provinceId"
+              [searchConfig]="{
+                columns: [
+                  { field: 'name', headerText: 'Ciudad', width: 200 }
+                ],
+                method: environment.api.url + '/api/general/City/getCityByProvince/' + (data.province?.id || data.provinceId),
+                params: {},
+                title: 'Seleccione la ciudad'
+              }"
+              [displayField]="'name'"
+              [initialValue]="data.city"
+              placeholder="Buscar ciudad..."
+              (selectedField)="data.city = $event; data.cityId = $event?.id">
+            </app-search-input>
+            <ejs-textbox *ngIf="!data.province?.id && !data.provinceId" placeholder="Seleccione una provincia primero" [enabled]="false"></ejs-textbox>
+          </ng-template>
+
+          <ejs-grid
+            [dataSource]="branches"
+            [allowPaging]="true"
+            [pageSettings]="{ pageSize: 10 }"
+            [toolbar]="['Add', 'Edit', 'Delete', 'Update', 'Cancel']"
+            [editSettings]="{ allowEditing: true, allowAdding: true, allowDeleting: true, mode: 'Normal' }"
+            (actionBegin)="onBranchActionBegin($event)"
+            (actionComplete)="onBranchActionComplete($event)"
+          >
+            <e-columns>
+              <e-column field="name" headerText="Nombre" width="200"></e-column>
+              <e-column field="countryId" headerText="País" width="180" [editTemplate]="countryEditTemplate" [valueAccessor]="countryNameAccessor"></e-column>
+              <e-column field="provinceId" headerText="Provincia" width="220" [editTemplate]="provinceEditTemplate" [valueAccessor]="provinceNameAccessor"></e-column>
+              <e-column field="cityId" headerText="Ciudad" width="180" [editTemplate]="cityEditTemplate" [valueAccessor]="cityNameAccessor"></e-column>
+              <e-column headerText="Acciones" width="120" [commands]="[{ type: 'Edit', buttonOption: { iconCss: 'e-icons e-edit', cssClass: 'e-flat' } }, { type: 'Delete', buttonOption: { iconCss: 'e-icons e-delete', cssClass: 'e-flat' } }, { type: 'Save', buttonOption: { iconCss: 'e-icons e-update', cssClass: 'e-flat' } }, { type: 'Cancel', buttonOption: { iconCss: 'e-icons e-cancel-icon', cssClass: 'e-flat' } }]"></e-column>
+            </e-columns>
+          </ejs-grid>
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+
+  <!-- Botones flotantes globales -->
+  <div class="floating-actions">
+    <button type="button" class="btn-cancel" (click)="onCancel()">
+      Cancelar
+    </button>
+    <button type="button" class="btn-select" (click)="onSubmit()">
+      {{ isEditMode ? 'Grabar' : 'Guardar' }}
+    </button>
+  </div>
+</div>
+}
+
+@if (isLoading) {
+<div class="loading-spinner">
+  <p>Cargando...</p>
+</div>
+}

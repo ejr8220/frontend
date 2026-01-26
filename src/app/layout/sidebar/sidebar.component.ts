@@ -29,12 +29,12 @@ export class SidebarComponent {
               {
                 id: 'parametros',
                 name: 'Parámetros Generales',
-                route: '/general/master/parametros-generales'
+                route: '/general/master/parametros'
               },
               {
                 id: 'companies',
                 name: 'Empresas',
-                route: '/general/master/companies'
+                route: '/general/company'
               },
               {
                 id: 'branches',
@@ -60,6 +60,29 @@ export class SidebarComponent {
             ]
           }
         ]
+      },
+      {
+        id: 'contabilidad',
+        name: 'Contabilidad',
+        expanded: false,
+        children: [
+          {
+            id: 'maestros-contabilidad',
+            name: 'Maestros',
+            children: [
+              {
+                id: 'plan-cuentas',
+                name: 'Plan de Cuentas',
+                route: '/accounting/chart-account'
+              },
+              {
+                id: 'centro-costos',
+                name: 'Centro de Costos',
+                route: '/accounting/cost-center'
+              }
+            ]
+          }
+        ]
       }
     ],
     id: 'id',
@@ -68,9 +91,28 @@ export class SidebarComponent {
   };
 
   onNodeSelected(event: any): void {
-    const node = event.nodeData;
-    if (node.route) {
+    console.log('Node selected:', event);
+    const nodeData = event.nodeData;
+    
+    // Buscar el nodo en el dataSource usando el id
+    const node = this.findNodeById(this.treeFields.dataSource, nodeData.id);
+    
+    if (node && node.route) {
+      console.log('Navegando a:', node.route);
       this.router.navigate([node.route]);
     }
+  }
+
+  private findNodeById(nodes: any[], id: string): any {
+    for (const node of nodes) {
+      if (node.id === id) {
+        return node;
+      }
+      if (node.children) {
+        const found = this.findNodeById(node.children, id);
+        if (found) return found;
+      }
+    }
+    return null;
   }
 }

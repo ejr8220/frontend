@@ -1,0 +1,28 @@
+<div class="grid-search-header">
+  <h3>{{ title }}</h3>
+</div>
+
+@if (isLoading) {
+  <div class="grid-search-loading">
+    <div class="spinner"></div>
+    <span>Cargando registros...</span>
+  </div>
+}
+
+@if (!isLoading) {
+  <ejs-grid
+    #gridSearch
+    [dataSource]="recordList"
+    [columns]="displayColumns"
+    [allowPaging]="true"
+    [pageSettings]="{ pageSize: 10 }"
+    [allowSorting]="true"
+    [allowFiltering]="true"
+    [filterSettings]="filterSettings"
+    [rowHeight]="36"
+    (recordDoubleClick)="onRowDoubleClick($event)"
+    (rowSelecting)="onRowSelected($event)"
+    (keyDown)="onKeyDown($event)"
+    class="grid-search-grid">
+  </ejs-grid>
+}
