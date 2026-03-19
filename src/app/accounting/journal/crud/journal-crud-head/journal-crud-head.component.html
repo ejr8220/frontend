@@ -1,0 +1,97 @@
+<div class="journal-head-container">
+  <h2>Datos de Cabecera</h2>
+  
+  <form [formGroup]="headForm" class="head-form">
+    <div class="form-row">
+      <div class="form-field">
+        <label for="voucherTypeId">Tipo de Comprobante <span class="required">*</span></label>
+        <ejs-dropdownlist
+          id="voucherTypeId"
+          formControlName="voucherTypeId"
+          [dataSource]="voucherTypes"
+          [fields]="{ text: 'name', value: 'id' }"
+          placeholder="Seleccione un tipo"
+          (change)="onFieldChange()">
+        </ejs-dropdownlist>
+        <div class="error-message" *ngIf="headForm.get('voucherTypeId')?.touched && headForm.get('voucherTypeId')?.hasError('required')">
+          El tipo de comprobante es requerido
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label for="documentNumber">Número</label>
+        <div class="number-with-actions">
+          <ejs-textbox
+            id="documentNumber"
+            formControlName="documentNumber"
+            [readonly]="true"
+            placeholder="Número"
+            (change)="onFieldChange()">
+          </ejs-textbox>
+
+          <ejs-tooltip content="Duplicar diario" position="TopCenter">
+            <button
+              type="button"
+              ejs-button
+              cssClass="e-flat clone-btn"
+              [disabled]="isEditMode"
+              (click)="openCloneSearch($event)">
+              ⧉
+            </button>
+          </ejs-tooltip>
+        </div>
+        <small *ngIf="isLoadingNumber">Cargando número...</small>
+      </div>
+
+      <div class="form-field">
+        <label for="createdAtUtc">Fecha <span class="required">*</span></label>
+        <ejs-datepicker
+          id="createdAtUtc"
+          formControlName="createdAtUtc"
+          format="dd/MM/yyyy"
+          (change)="onFieldChange()">
+        </ejs-datepicker>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-field">
+        <label for="bookId">Libro <span class="required">*</span></label>
+        <ejs-dropdownlist
+          id="bookId"
+          formControlName="bookId"
+          [dataSource]="books"
+          [fields]="{ text: 'name', value: 'id' }"
+          placeholder="Seleccione un libro"
+          (change)="onFieldChange()">
+        </ejs-dropdownlist>
+        <div class="error-message" *ngIf="headForm.get('bookId')?.touched && headForm.get('bookId')?.hasError('required')">
+          El libro es requerido
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label for="description">Descripción <span class="required">*</span></label>
+        <ejs-textbox
+          id="description"
+          formControlName="description"
+          placeholder="Descripción del diario contable"
+          multiline="true"
+          (change)="onFieldChange()">
+        </ejs-textbox>
+        <div class="error-message" *ngIf="headForm.get('description')?.touched && headForm.get('description')?.hasError('required')">
+          La descripción es requerida
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <app-search-input
+    #cloneSearchInput
+    class="clone-search-host"
+    [searchConfig]="cloneSearchConfig"
+    [displayField]="'documentNumber'"
+    [placeholder]="'Buscar diario'"
+    (selectedField)="onCloneSearchSelect($event)">
+  </app-search-input>
+</div>

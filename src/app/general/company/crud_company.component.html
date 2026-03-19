@@ -155,11 +155,25 @@
                 </ejs-textbox>
               </div>
               <div class="form-group">
-                <label>Identificación Rep. Legal *</label>
+                <div class="label-with-action">
+                  <label>Identificación Rep. Legal *</label>
+                  <ejs-tooltip content="Cargar certificado pfx" position="TopCenter">
+                    <button
+                      ejs-button
+                      type="button"
+                      cssClass="e-flat pfx-key-button"
+                      (click)="openCertificateModal()">
+                      <span class="pfx-key-icon">🔑</span>
+                    </button>
+                  </ejs-tooltip>
+                </div>
                 <ejs-textbox
                   formControlName="legalRepresentativeIdentification"
                   placeholder="Identificación del representante">
                 </ejs-textbox>
+                <small class="pfx-route" *ngIf="companyForm.get('pfxRoute')?.value">
+                  Certificado cargado: {{ companyForm.get('pfxRoute')?.value }}
+                </small>
               </div>
             </div>
 
@@ -238,26 +252,20 @@
               [displayField]="'name'"
               [initialValue]="data.country"
               placeholder="Buscar país..."
-              (selectedField)="data.country = $event; data.countryId = $event?.id">
+              (selectedField)="onBranchCountrySelect(data, $event)"
+              (clearField)="onBranchCountryClear(data)">
             </app-search-input>
           </ng-template>
 
           <ng-template #provinceEditTemplate let-data>
             <app-search-input
               *ngIf="data.country?.id || data.countryId"
-              [searchConfig]="{
-                columns: [
-                  { field: 'name', headerText: 'Provincia', width: 200 },
-                  { field: 'isoCode', headerText: 'Código', width: 100 }
-                ],
-                method: environment.api.url + '/api/general/Province/getProvinceByCountry/' + (data.country?.id || data.countryId),
-                params: {},
-                title: 'Seleccione la provincia'
-              }"
+              [searchConfig]="getProvinceSearchConfigForRow(data)!"
               [displayField]="'name'"
               [initialValue]="data.province"
               placeholder="Buscar provincia..."
-              (selectedField)="data.province = $event; data.provinceId = $event?.id">
+              (selectedField)="onBranchProvinceSelect(data, $event)"
+              (clearField)="onBranchProvinceClear(data)">
             </app-search-input>
             <ejs-textbox *ngIf="!data.country?.id && !data.countryId" placeholder="Seleccione un país primero" [enabled]="false"></ejs-textbox>
           </ng-template>
@@ -265,18 +273,12 @@
           <ng-template #cityEditTemplate let-data>
             <app-search-input
               *ngIf="data.province?.id || data.provinceId"
-              [searchConfig]="{
-                columns: [
-                  { field: 'name', headerText: 'Ciudad', width: 200 }
-                ],
-                method: environment.api.url + '/api/general/City/getCityByProvince/' + (data.province?.id || data.provinceId),
-                params: {},
-                title: 'Seleccione la ciudad'
-              }"
+              [searchConfig]="getCitySearchConfigForRow(data)!"
               [displayField]="'name'"
               [initialValue]="data.city"
               placeholder="Buscar ciudad..."
-              (selectedField)="data.city = $event; data.cityId = $event?.id">
+              (selectedField)="onBranchCitySelect(data, $event)"
+              (clearField)="onBranchCityClear(data)">
             </app-search-input>
             <ejs-textbox *ngIf="!data.province?.id && !data.provinceId" placeholder="Seleccione una provincia primero" [enabled]="false"></ejs-textbox>
           </ng-template>
@@ -315,6 +317,59 @@
   </div>
 </div>
 }
+
+<ejs-dialog
+  [visible]="isCertificateModalOpen"
+  [isModal]="true"
+  [showCloseIcon]="true"
+  [closeOnEscape]="true"
+  [width]="'560px'"
+  header="Cargar certificado PFX"
+  (close)="closeCertificateModal()">
+  <ng-template #content>
+    <div class="certificate-modal-content">
+      <div class="form-group">
+        <label>Archivo certificado (.pfx)</label>
+        <ejs-uploader
+          [allowedExtensions]="'.pfx'"
+          [autoUpload]="false"
+          [multiple]="false"
+          (selected)="onPfxFileSelected($event)">
+        </ejs-uploader>
+      </div>
+
+      <div class="form-group password-row">
+        <label>Clave del certificado</label>
+        <div class="password-wrapper">
+          <ejs-textbox
+            [type]="showPfxPassword ? 'text' : 'password'"
+            [value]="pfxPassword"
+            placeholder="Ingrese la clave"
+            (input)="pfxPassword = $any($event).value || ''">
+          </ejs-textbox>
+          <button
+            ejs-button
+            type="button"
+            cssClass="e-flat password-toggle"
+            (click)="togglePfxPasswordVisibility()">
+            {{ showPfxPassword ? 'Ocultar' : 'Ver' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #footerTemplate>
+    <div class="certificate-modal-actions">
+      <button ejs-button type="button" cssClass="e-flat" (click)="closeCertificateModal()" [disabled]="isUploadingCertificate">
+        Cancelar
+      </button>
+      <button ejs-button type="button" cssClass="e-primary" (click)="uploadCertificate()" [disabled]="isUploadingCertificate">
+        {{ isUploadingCertificate ? 'Cargando...' : 'Cargar certificado' }}
+      </button>
+    </div>
+  </ng-template>
+</ejs-dialog>
 
 @if (isLoading) {
 <div class="loading-spinner">

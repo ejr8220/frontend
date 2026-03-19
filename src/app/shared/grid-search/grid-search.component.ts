@@ -5,10 +5,12 @@ import {
   EventEmitter,
   ViewChild,
   OnInit,
+  OnChanges,
+  SimpleChanges,
   ChangeDetectorRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { GridComponent, GridModule, FilterService, PageService, SelectionService } from '@syncfusion/ej2-angular-grids';
 import { ButtonModule } from '@syncfusion/ej2-angular-buttons';
 
@@ -21,10 +23,12 @@ import { ButtonModule } from '@syncfusion/ej2-angular-buttons';
   providers: [FilterService, PageService, SelectionService],
   host: { class: 'grid-search-container' }
 })
-export class GridSearchComponent implements OnInit {
+export class GridSearchComponent implements OnInit, OnChanges {
   @Input() columns: any[] = [];
   @Input() method: string = '';
   @Input() params: any = {};
+  @Input() requestType: 'GET' | 'POST' = 'GET';
+  @Input() body: any = null;
   @Input() title: string = 'Registros Disponibles';
 
   toolbar: string[] = [];
@@ -47,9 +51,19 @@ export class GridSearchComponent implements OnInit {
     this.loadRecords();
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['columns']) {
+      this.initializeColumns();
+    }
+
+    if (changes['method'] || changes['params'] || changes['requestType'] || changes['body']) {
+      this.loadRecords();
+    }
+  }
+
   initializeColumns(): void {
     // Agregar columna de checkbox primero
-    const mappedColumns = this.columns.map(col => ({
+    const mappedColumns = (this.columns || []).map(col => ({
       ...col,
       filter: { operator: 'contains' }
     }));
@@ -73,26 +87,92 @@ export class GridSearchComponent implements OnInit {
 
     this.isLoading = true;
     const token = this.getTokenFromCookie();
+    let headers = new HttpHeaders();
+    if (token) {
+      headers = headers.set('Authorization', `Bearer ${token}`);
+    }
 
-    this.http
-      .get<any>(this.method, {
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-        params: this.params,
-      })
-      .subscribe({
-        next: (response) => {
-          this.recordList = response.result || response.data || response || [];
-          console.log('Records loaded:', this.recordList);
-          this.isLoading = false;
-          this.cdr.detectChanges();
-        },
-        error: (err) => {
-          console.error('Error loading records:', err);
-          this.isLoading = false;
-          this.recordList = [];
-          this.cdr.detectChanges();
-        },
+    const options = {
+      headers,
+      params: this.params,
+    };
+
+    const request$ = this.requestType === 'POST'
+      ? this.http.post<any>(this.method, this.body ?? {}, options)
+      : this.http.get<any>(this.method, options);
+
+    request$.subscribe({
+      next: (response: unknown) => {
+        const rawList = this.extractRecordsFromResponse(response);
+        this.recordList = this.applyClientFilters(rawList);
+        console.log('Records loaded:', this.recordList);
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error loading records:', err);
+        this.isLoading = false;
+        this.recordList = [];
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  private extractRecordsFromResponse(response: unknown): any[] {
+    if (Array.isArray(response)) {
+      return response;
+    }
+
+    if (response && typeof response === 'object') {
+      const payload = response as { result?: unknown; data?: unknown };
+      if (Array.isArray(payload.result)) {
+        return payload.result;
+      }
+      if (payload.result && typeof payload.result === 'object') {
+        return [payload.result];
+      }
+      if (Array.isArray(payload.data)) {
+        return payload.data;
+      }
+      if (payload.data && typeof payload.data === 'object') {
+        return [payload.data];
+      }
+
+      return [payload];
+    }
+
+    return [];
+  }
+
+  private applyClientFilters(records: any[]): any[] {
+    if (!Array.isArray(records)) {
+      return [];
+    }
+
+    let filtered = [...records];
+
+    const companyId = Number(this.params?.companyId ?? 0);
+    if (companyId > 0) {
+      filtered = filtered.filter(item => {
+        const itemCompanyId = Number(
+          item?.companyId ??
+          item?.CompanyId ??
+          item?.company?.id ??
+          item?.Company?.Id ??
+          0
+        );
+        return itemCompanyId === companyId;
       });
+    }
+
+    if (this.params?.detailOnly === true) {
+      filtered = filtered.filter(item => {
+        const detailFlag = item?.isDetailAccount ?? item?.IsDetailAccount;
+        return detailFlag === true || detailFlag === 1 || detailFlag === '1' || detailFlag === 'true';
+      });
+    }
+
+    return filtered;
   }
 
   getTokenFromCookie(): string {

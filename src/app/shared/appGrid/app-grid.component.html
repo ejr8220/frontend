@@ -22,6 +22,7 @@
       <e-column headerText="Acciones" width="150" textAlign="Center">
         <ng-template #template let-data>
           <button class="action-btn edit" (click)="editRow(data)" title="Editar">✏️</button>
+          <button class="action-btn print" *ngIf="showPrintAction" (click)="printRow(data)" title="Imprimir">🖨️</button>
           <button class="action-btn delete" (click)="confirmDelete(data)" title="Eliminar">🗑️</button>
         </ng-template>
       </e-column>

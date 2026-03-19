@@ -1,3 +1,10 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
 .grid-search-container {
   display: flex;
   flex-direction: column;
@@ -5,7 +12,7 @@
   width: 100%;
   border-bottom: 1px solid #e0e0e0;
   background: #f9f9f9;
-  flex-shrink: 0;
+  min-height: 0;
   
   h3 {
     margin: 0;
@@ -15,12 +22,26 @@
   }
 }
 
+.grid-search-header {
+  flex: 0 0 auto;
+  padding: 8px 12px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.grid-search-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
 .grid-search-loading {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   flex: 1;
+  min-height: 0;
   gap: 16px;
   color: #666;
 }
@@ -32,95 +53,32 @@
 
 .grid-search-grid {
   width: 100%;
-  flex: 1;
+  height: 100%;
+  min-height: 0;
   overflow: hidden !important;
 
   ::ng-deep {
     .e-grid {
-      height: 100%;
+      height: 100% !important;
+      display: flex;
+      flex-direction: column;
     }
 
     .e-gridcontent {
-      height: calc(100% - 50px);
-      overflow: hidden !important;
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow: auto !important;
     }
 
     .e-pager {
       background: #f9f9f9;
       border-top: 1px solid #e0e0e0;
       padding: 8px 16px;
-      position: sticky;
-      bottom: 0;
+      position: static;
       height: 50px;
       display: flex;
       align-items: center;
+      margin-top: auto;
     }
   }
-}
-
-.grid-search-footer {
-  padding: 12px 16px;
-  border-bottom: 1px solid #e0e0e0;
-  background: #f9f9f9;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-  
-  h3 {
-    margin: 0;
-    font-size: 14px;
-    font-weight: 600;
-    color: #333;
-  }
-
-  .header-actions {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .quick-search {
-    width: 180px;
-    padding: 6px 10px;
-    border: 1px solid #d0d0d0;
-    border-radius: 4px;
-    font-size: 13px;
-  }
-
-  .hint {
-    color: #888;
-    font-size: 11px;
-  }
-  padding: 8px 16px;
-  border-radius: 4px;
-  border: none;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-  transition: all 0.2s;
-}
-
-.btn-select:hover:not(:disabled),
-.btn-cancel:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.btn-select:disabled,
-.btn-cancel:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.btn-select {
-  background: #0078d4;
-  color: white;
-}
-
-.btn-cancel {
-  background: white;
-  border: 1px solid #ddd;
-  color: #333;
 }

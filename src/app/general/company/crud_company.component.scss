@@ -118,6 +118,58 @@
   }
 }
 
+.label-with-action {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.pfx-key-button {
+  width: 32px;
+  min-width: 32px;
+  height: 32px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pfx-key-icon {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.pfx-route {
+  margin-top: 6px;
+  font-size: 12px;
+  opacity: 0.75;
+  word-break: break-all;
+}
+
+.certificate-modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.password-row .password-wrapper {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.password-toggle {
+  min-width: 78px;
+}
+
+.certificate-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
 .legales-frame {
   border: 2px solid #ddd;
   border-radius: 4px;

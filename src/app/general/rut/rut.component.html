@@ -1,0 +1,19 @@
+<div class="rut-container">
+  <h1>Rut</h1>
+
+  <app-grid
+    #rutGrid
+    [toolbar]="toolbar"
+    [columns]="columns"
+    [urlData]="urlGetAll"
+    [urlEdit]="urlEdit"
+    [urlDelete]="urlDelete"
+    [height]="'600px'"
+    [allowPaging]="true"
+    [allowFiltering]="true"
+    (onAdd)="onAdd()"
+    (onEdit)="onEdit($event)"
+    (onDelete)="onDelete($event)"
+    (onRefresh)="onRefresh()">
+  </app-grid>
+</div>

@@ -1,0 +1,17 @@
+<div class="report-host-container">
+  <h2>{{ reportTitle }}</h2>
+
+  <div class="report-card">
+    <p><strong>RDL:</strong> {{ rdlFile }}</p>
+    <p><strong>Estado:</strong> Conectado en frontend (host de reporte).</p>
+
+    <div *ngIf="reportType === 'journal'" class="journal-actions">
+      <label>Journal Id</label>
+      <ejs-textbox type="number" [(ngModel)]="journalId" placeholder="Ingrese Journal Id"></ejs-textbox>
+      <button ejs-button cssClass="e-primary" (click)="openJournalReportRdl()">
+        Ejecutar JournalReport.rdl
+      </button>
+      <p class="hint">Reporte: JournalReport.rdl (SP: dbo.sp_JournalReport)</p>
+    </div>
+  </div>
+</div>

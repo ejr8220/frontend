@@ -256,9 +256,26 @@ export class CrudChartAccountComponent implements OnInit {
       return;
     }
 
+    const formValue = this.chartAccountForm.value;
+    const code = String(formValue.code || '').trim();
+    const computedLevel = code ? code.split('.').filter((part: string) => part !== '').length : 0;
+
+    const parentIdRaw = formValue.parentId;
+    const parentId = parentIdRaw === null || parentIdRaw === '' || parentIdRaw === undefined
+      ? null
+      : Number(parentIdRaw);
+
     const data = {
-      ...this.chartAccountForm.value,
-      companyId: this.companyId
+      ...formValue,
+      id: this.isEditMode ? Number(this.chartAccountId || 0) : 0,
+      companyId: Number(this.companyId),
+      code,
+      debtorSign: Number(formValue.debtorSign || 1),
+      level: computedLevel,
+      parentId: Number.isFinite(parentId as number) && (parentId as number) > 0 ? parentId : null,
+      auxiliaryTypeId: formValue.isAuxRequired ? formValue.auxiliaryTypeId : null,
+      classifier1TypeId: formValue.isClassifier1Required ? formValue.classifier1TypeId : null,
+      classifier2TypeId: formValue.isClassifier2Required ? formValue.classifier2TypeId : null
     };
 
     if (this.isEditMode && this.chartAccountId) {
@@ -267,7 +284,11 @@ export class CrudChartAccountComponent implements OnInit {
           alert('Cuenta actualizada correctamente');
           this.router.navigate(['/accounting/chart-account']);
         },
-        error: (error) => console.error('Error updating:', error)
+        error: (error) => {
+          console.error('Error updating:', error);
+          const message = error?.error?.message || error?.error?.title || 'No se pudo actualizar la cuenta.';
+          alert(message);
+        }
       });
     } else {
       this.chartAccountService.create(data).subscribe({
@@ -275,7 +296,11 @@ export class CrudChartAccountComponent implements OnInit {
           alert('Cuenta creada correctamente');
           this.router.navigate(['/accounting/chart-account']);
         },
-        error: (error) => console.error('Error creating:', error)
+        error: (error) => {
+          console.error('Error creating:', error);
+          const message = error?.error?.message || error?.error?.title || 'No se pudo crear la cuenta.';
+          alert(message);
+        }
       });
     }
   }

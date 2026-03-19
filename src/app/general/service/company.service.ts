@@ -24,6 +24,8 @@ export interface Company {
     id: number;
     name: string;
   };
+  pfxRoute?: string;
+  pfxKey?: string;
 }
 
 @Injectable({
@@ -52,6 +54,13 @@ export class CompanyService {
   updateCompany(id: number, company: Company): Observable<Company> {
     const headers = this.buildHeaders();
     return this.http.put<Company>(`${this.apiUrl}/${id}`, company, { headers });
+  }
+
+  uploadPfxCertificate(file: File): Observable<{ route: string; fileName: string }> {
+    const headers = this.buildHeaders();
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<{ route: string; fileName: string }>(`${this.apiUrl}/upload-pfx`, formData, { headers });
   }
 
   deleteCompany(id: number): Observable<void> {

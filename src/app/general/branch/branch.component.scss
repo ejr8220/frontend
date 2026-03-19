@@ -1,0 +1,19 @@
+.branch-container {
+  padding: 20px;
+  height: 100%;
+
+  h1 {
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 24px;
+    font-weight: 600;
+  }
+}
+
+.empty-state {
+  padding: 16px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fafafa;
+  color: #666;
+}

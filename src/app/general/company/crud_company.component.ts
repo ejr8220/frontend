@@ -5,10 +5,11 @@ import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http'
 import { Router, ActivatedRoute } from '@angular/router';
 import { BranchService } from '../service/branch.service';
 import { TextBoxModule } from '@syncfusion/ej2-angular-inputs';
+import { UploaderModule } from '@syncfusion/ej2-angular-inputs';
 import { DropDownListModule } from '@syncfusion/ej2-angular-dropdowns';
 import { ButtonModule } from '@syncfusion/ej2-angular-buttons';
 import { GridModule, FilterService, PageService, ToolbarService, EditService, CommandColumnService } from '@syncfusion/ej2-angular-grids';
-import { DialogModule, DialogComponent } from '@syncfusion/ej2-angular-popups';
+import { DialogModule, DialogComponent, TooltipModule } from '@syncfusion/ej2-angular-popups';
 import { SearchInputComponent, SearchInputConfig } from '../../shared/search-input/search-input.component';
 import { CompanyService, Company } from '../service/company.service';
 import { IdentificationTypeService } from '../service/identification-type.service';
@@ -18,7 +19,12 @@ interface Branch {
   id?: number;
   name: string;
   companyId: number;
-  cityId: number;
+  cityId: number | null;
+  countryId?: number | null;
+  provinceId?: number | null;
+  country?: any;
+  province?: any;
+  city?: any;
 }
 
 @Component({
@@ -29,10 +35,12 @@ interface Branch {
     ReactiveFormsModule,
     HttpClientModule,
     TextBoxModule,
+    UploaderModule,
     DropDownListModule,
     ButtonModule,
     GridModule,
     DialogModule,
+    TooltipModule,
     SearchInputComponent
   ],
   templateUrl: './crud_company.component.html',
@@ -60,6 +68,7 @@ export class CrudCompanyComponent implements OnInit {
   selectedProvince: any = null;
   selectedCity: any = null;
   branches: Branch[] = [];
+  private branchLocalSequence = 1;
 
   // Configuración de búsqueda para Country
   countrySearchConfig: SearchInputConfig = {
@@ -80,6 +89,11 @@ export class CrudCompanyComponent implements OnInit {
   branchForm!: FormGroup;
   isAddingBranch = false;
   editingBranchId: number | null = null;
+  isCertificateModalOpen = false;
+  selectedPfxFile: File | null = null;
+  pfxPassword = '';
+  showPfxPassword = false;
+  isUploadingCertificate = false;
 
   constructor(
     private fb: FormBuilder,
@@ -132,6 +146,8 @@ export class CrudCompanyComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       legalRepresentativeName: ['', [Validators.required]],
       legalRepresentativeIdentification: ['', [Validators.required]],
+      pfxRoute: [''],
+      pfxKey: [''],
       accountantName: ['', [Validators.required]],
       accountantIdentification: ['', [Validators.required]]
     });
@@ -168,18 +184,17 @@ export class CrudCompanyComponent implements OnInit {
       next: (list: any[]) => {
         console.log('Branches loaded:', list);
         // Normalize keeping only companyId, keep nested objects for display
-        this.branches = (list || []).map((b: any) => ({
+        this.branches = (list || []).map((b: any) => this.normalizeBranchRow({
           id: b.id,
           name: b.name,
           companyId: b.company?.id ?? companyId,
           countryId: b.country?.id ?? null,
           provinceId: b.province?.id ?? null,
           cityId: b.city?.id ?? null,
-          // Keep nested for display/edit templates
           city: b.city || null,
           province: b.province || null,
           country: b.country || null
-        } as any));
+        }));
         console.log('Branches normalized:', this.branches);
         this.cdr.detectChanges();
       },
@@ -214,6 +229,8 @@ export class CrudCompanyComponent implements OnInit {
           email: company.email,
           legalRepresentativeName: company.legalRepresentativeName,
           legalRepresentativeIdentification: company.legalRepresentativeIdentification,
+          pfxRoute: company.pfxRoute || '',
+          pfxKey: company.pfxKey || '',
           accountantName: company.accountantName,
           accountantIdentification: company.accountantIdentification
         });
@@ -255,6 +272,57 @@ export class CrudCompanyComponent implements OnInit {
         alert('Error al cargar la empresa. Por favor, intente nuevamente.');
         this.isLoading = false;
         this.router.navigate(['/general/company']);
+      }
+    });
+  }
+
+  openCertificateModal(): void {
+    this.isCertificateModalOpen = true;
+    this.selectedPfxFile = null;
+    this.pfxPassword = this.companyForm.get('pfxKey')?.value || '';
+    this.showPfxPassword = false;
+  }
+
+  closeCertificateModal(): void {
+    this.isCertificateModalOpen = false;
+    this.selectedPfxFile = null;
+    this.showPfxPassword = false;
+  }
+
+  onPfxFileSelected(args: any): void {
+    const file = args?.filesData?.[0]?.rawFile as File;
+    this.selectedPfxFile = file || null;
+  }
+
+  togglePfxPasswordVisibility(): void {
+    this.showPfxPassword = !this.showPfxPassword;
+  }
+
+  uploadCertificate(): void {
+    if (!this.selectedPfxFile) {
+      alert('Debe seleccionar un archivo .pfx');
+      return;
+    }
+
+    if (!this.pfxPassword || !this.pfxPassword.trim()) {
+      alert('Debe ingresar la clave del certificado.');
+      return;
+    }
+
+    this.isUploadingCertificate = true;
+    this.companyService.uploadPfxCertificate(this.selectedPfxFile).subscribe({
+      next: (response) => {
+        this.companyForm.patchValue({
+          pfxRoute: response?.route || '',
+          pfxKey: this.pfxPassword
+        });
+        this.isUploadingCertificate = false;
+        this.closeCertificateModal();
+      },
+      error: (error) => {
+        console.error('Error al cargar certificado pfx:', error);
+        alert(error?.error?.message || 'No fue posible cargar el certificado pfx.');
+        this.isUploadingCertificate = false;
       }
     });
   }
@@ -357,16 +425,77 @@ export class CrudCompanyComponent implements OnInit {
 
   // Grid event handlers for branches grid
   onBranchActionBegin(args: any): void {
-    if (args?.requestType === 'save' && args.data) {
-      const data: any = args.data;
-      data.countryId = data.country?.id ?? data.countryId ?? null;
-      data.provinceId = data.province?.id ?? data.provinceId ?? null;
-      data.cityId = data.city?.id ?? data.cityId ?? null;
+    if (!args) {
+      return;
+    }
+
+    if (args.requestType === 'add' && args.data) {
+      args.data.companyId = this.companyId || 0;
+      args.data.country = null;
+      args.data.province = null;
+      args.data.city = null;
+      args.data.countryId = null;
+      args.data.provinceId = null;
+      args.data.cityId = null;
+      (args.data as any)._localId = this.branchLocalSequence++;
+    }
+
+    if (args.requestType === 'save' && args.data) {
+      const data: any = this.normalizeBranchRow(args.data);
+
+      if (!data.name || !String(data.name).trim()) {
+        args.cancel = true;
+        alert('Debe ingresar el nombre de la sucursal.');
+        return;
+      }
+
+      if (!data.countryId) {
+        args.cancel = true;
+        alert('Debe seleccionar un país.');
+        return;
+      }
+
+      if (!data.provinceId) {
+        args.cancel = true;
+        alert('Debe seleccionar una provincia.');
+        return;
+      }
+
+      if (!data.cityId) {
+        args.cancel = true;
+        alert('Debe seleccionar una ciudad.');
+        return;
+      }
+
+      Object.assign(args.data, data);
     }
   }
 
   onBranchActionComplete(args: any): void {
-    // Placeholder for future persistence hooks
+    if (!args) {
+      return;
+    }
+
+    if (args.requestType === 'save' && args.data) {
+      const savedRow = this.normalizeBranchRow(args.data);
+      const byIdIndex = savedRow.id ? this.branches.findIndex(b => b.id === savedRow.id) : -1;
+      const byLocalIndex = byIdIndex < 0 ? this.branches.findIndex((b: any) => (b as any)._localId === (savedRow as any)._localId) : -1;
+      const rowIndex = byIdIndex >= 0 ? byIdIndex : byLocalIndex;
+
+      if (rowIndex >= 0) {
+        this.branches[rowIndex] = savedRow;
+      } else {
+        this.branches = [...this.branches, savedRow];
+      }
+
+      this.branches = [...this.branches];
+      this.cdr.detectChanges();
+    }
+
+    if (args.requestType === 'delete') {
+      this.branches = [...this.branches];
+      this.cdr.detectChanges();
+    }
   }
 
   // Accessors for nested names in grid display
@@ -384,7 +513,7 @@ export class CrudCompanyComponent implements OnInit {
 
   // Helpers for dynamic search configs per row in branches grid
   getProvinceSearchConfigForRow(row: any): SearchInputConfig | null {
-    const countryId = row?.country?.id || this.selectedCountryId;
+    const countryId = row?.country?.id || row?.countryId;
     if (!countryId) return null;
     return {
       columns: [
@@ -398,7 +527,7 @@ export class CrudCompanyComponent implements OnInit {
   }
 
   getCitySearchConfigForRow(row: any): SearchInputConfig | null {
-    const provinceId = row?.province?.id;
+    const provinceId = row?.province?.id || row?.provinceId;
     if (!provinceId) return null;
     return {
       columns: [
@@ -518,8 +647,14 @@ export class CrudCompanyComponent implements OnInit {
 
     this.isLoading = true;
     const formData = {
+      id: this.companyId || 0,
       ...this.companyForm.value,
-      branchesFk: this.branches
+      branchesFk: this.branches.map(branch => ({
+        id: branch.id,
+        name: branch.name,
+        companyId: branch.companyId || this.companyId || 0,
+        cityId: branch.city?.id ?? branch.cityId ?? 0
+      }))
     };
 
     if (this.isEditMode && this.companyId) {
@@ -613,5 +748,73 @@ export class CrudCompanyComponent implements OnInit {
     this.branchForm.reset();
     this.editingBranchId = null;
     this.isAddingBranch = false;
+  }
+
+  onBranchCountrySelect(row: any, country: any): void {
+    row.country = country || null;
+    row.countryId = country?.id || null;
+    row.province = null;
+    row.provinceId = null;
+    row.city = null;
+    row.cityId = null;
+    this.cdr.detectChanges();
+  }
+
+  onBranchCountryClear(row: any): void {
+    row.country = null;
+    row.countryId = null;
+    row.province = null;
+    row.provinceId = null;
+    row.city = null;
+    row.cityId = null;
+    this.cdr.detectChanges();
+  }
+
+  onBranchProvinceSelect(row: any, province: any): void {
+    row.province = province || null;
+    row.provinceId = province?.id || null;
+    row.city = null;
+    row.cityId = null;
+    this.cdr.detectChanges();
+  }
+
+  onBranchProvinceClear(row: any): void {
+    row.province = null;
+    row.provinceId = null;
+    row.city = null;
+    row.cityId = null;
+    this.cdr.detectChanges();
+  }
+
+  onBranchCitySelect(row: any, city: any): void {
+    row.city = city || null;
+    row.cityId = city?.id || null;
+    this.cdr.detectChanges();
+  }
+
+  onBranchCityClear(row: any): void {
+    row.city = null;
+    row.cityId = null;
+    this.cdr.detectChanges();
+  }
+
+  private normalizeBranchRow(row: any): Branch {
+    const normalized = {
+      ...row,
+      name: (row?.name || '').trim(),
+      companyId: row?.companyId || this.companyId || 0,
+      countryId: row?.country?.id ?? row?.countryId ?? null,
+      provinceId: row?.province?.id ?? row?.provinceId ?? null,
+      cityId: row?.city?.id ?? row?.cityId ?? null,
+      country: row?.country || null,
+      province: row?.province || null,
+      city: row?.city || null
+    } as Branch;
+
+    if (!(normalized as any)._localId) {
+      (normalized as any)._localId = this.branchLocalSequence++;
+    }
+
+    return normalized;
   }
 }

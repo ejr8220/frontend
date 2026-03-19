@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export interface ChartAccount {
   id: number;
@@ -45,7 +46,7 @@ export interface FilterRequest {
   providedIn: 'root'
 })
 export class ChartAccountService {
-  private apiUrl = 'http://localhost:5096/api/accounting/ChartAccount';
+  private apiUrl = `${environment.api.url}/api/accounting/ChartAccount`;
 
   constructor(private http: HttpClient) {}
 

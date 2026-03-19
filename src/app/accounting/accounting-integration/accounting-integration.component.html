@@ -1,0 +1,46 @@
+<div class="crud-container">
+  <div class="crud-header">
+    <h2>Integración contable</h2>
+    <small *ngIf="companyId > 0">Empresa en sesión: {{ companyId }}</small>
+    <small *ngIf="companyId <= 0" class="error">No hay empresa seleccionada en sesión</small>
+  </div>
+
+  <div class="form-content">
+    <div class="form-container">
+      <div class="form-group">
+        <label>Tipo de Libro</label>
+        <ejs-dropdownlist
+          [dataSource]="bookTypes"
+          [fields]="bookTypeFields"
+          [(ngModel)]="selectedBookType"
+          popupHeight="220px">
+        </ejs-dropdownlist>
+      </div>
+
+      <div class="form-group">
+        <label>Periodo (Mes y Año)</label>
+        <div class="form-row">
+          <ejs-dropdownlist
+            [dataSource]="months"
+            [fields]="periodFields"
+            [(ngModel)]="selectedMonth"
+            popupHeight="240px">
+          </ejs-dropdownlist>
+
+          <ejs-dropdownlist
+            [dataSource]="years"
+            [(ngModel)]="selectedYear"
+            popupHeight="220px">
+          </ejs-dropdownlist>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="floating-actions">
+    <button ejs-button cssClass="e-flat" (click)="onCancel()">Cancelar</button>
+    <button ejs-button cssClass="e-primary" (click)="onIntegrate()" [disabled]="isLoading || companyId <= 0">
+      {{ isLoading ? 'Procesando...' : 'Centralizar' }}
+    </button>
+  </div>
+</div>

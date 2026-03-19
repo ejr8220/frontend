@@ -45,11 +45,13 @@ export class GridSharedComponent implements OnInit {
   @Input() urlEdit!: string;
   @Input() urlDelete!: string;
   @Input() columns: any[] = [];
+  @Input() showPrintAction = false;
 
   @Output() onEdit = new EventEmitter<any>();
   @Output() onDelete = new EventEmitter<any>();
   @Output() onAdd = new EventEmitter<void>();
   @Output() onRefresh = new EventEmitter<void>();
+  @Output() onPrint = new EventEmitter<any>();
 
   public dataSource: any;
   public pageSettings: PageSettingsModel = { 
@@ -126,6 +128,10 @@ export class GridSharedComponent implements OnInit {
   editRow(row: any): void {
     this.router.navigate([this.urlEdit, row.id]);
     this.onEdit.emit(row);
+  }
+
+  printRow(row: any): void {
+    this.onPrint.emit(row);
   }
 
   refreshGrid(): void {

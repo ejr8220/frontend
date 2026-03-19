@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export interface ParameterDetail {
   id: number;
@@ -34,7 +35,7 @@ export interface ParameterResponse {
   providedIn: 'root'
 })
 export class ParameterService {
-  private apiUrl = 'http://localhost:5096/api/general/ParameterHeader';
+  private apiUrl = `${environment.api.url}/api/general/ParameterHeader`;
 
   constructor(private http: HttpClient) {}
 

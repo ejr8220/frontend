@@ -30,6 +30,26 @@ export const generalRoutes: Routes = [
     path: 'master/parametros/crud/:id',
     loadComponent: () =>
       import('./parameter/crud/crud_parameter.component').then(m => m.CrudParameterComponent)
+  },
+  {
+    path: 'master/branches',
+    loadComponent: () =>
+      import('./branch/branch.component').then(m => m.BranchComponent)
+  },
+  {
+    path: 'transacciones/rut',
+    loadComponent: () =>
+      import('./rut/rut.component').then(m => m.RutComponent)
+  },
+  {
+    path: 'transacciones/rut/crud',
+    loadComponent: () =>
+      import('./rut/crud/crud_rut.component').then(m => m.CrudRutComponent)
+  },
+  {
+    path: 'transacciones/rut/crud/:id',
+    loadComponent: () =>
+      import('./rut/crud/crud_rut.component').then(m => m.CrudRutComponent)
   }
 ];
 

@@ -1,0 +1,23 @@
+.report-host-container {
+  padding: 16px 24px;
+}
+
+.report-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+  background: #fff;
+  max-width: 720px;
+}
+
+.journal-actions {
+  margin-top: 12px;
+  display: grid;
+  gap: 10px;
+  max-width: 320px;
+}
+
+.hint {
+  font-size: 12px;
+  opacity: 0.75;
+}

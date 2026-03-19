@@ -1,0 +1,25 @@
+<div class="journal-container">
+  <h1>Diarios Contables</h1>
+
+  <div class="success-toast" *ngIf="showToast">
+    {{ toastMessage }}
+  </div>
+  
+  <app-grid 
+    #journalGrid
+    [toolbar]="toolbar"
+    [columns]="columns"
+    [showPrintAction]="true"
+    [urlData]="urlGetAll"
+    [urlEdit]="urlEdit"
+    [urlDelete]="urlDelete"
+    [height]="'600px'"
+    [allowPaging]="true"
+    [allowFiltering]="true"
+    (onAdd)="onAdd()"
+    (onEdit)="onEdit($event)"
+    (onPrint)="onPrint($event)"
+    (onDelete)="onDelete($event)"
+    (onRefresh)="onRefresh()">
+  </app-grid>
+</div>

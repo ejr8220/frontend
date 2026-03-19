@@ -1,0 +1,211 @@
+<div class="journal-details-container">
+  <h2>Detalle Contable</h2>
+
+  <div class="detail-actions">
+    <button type="button" class="btn-add-line" (click)="addLine()">Agregar línea</button>
+  </div>
+  
+  <div class="grid-container">
+    <table class="detail-table">
+      <thead>
+        <tr>
+          <th>Cuenta</th>
+          <th>Auxiliar</th>
+          <th>Centro de Costo</th>
+          <th>Débito</th>
+          <th>Crédito</th>
+          <th>Detalle</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let line of lines; trackBy: trackByLine" (dblclick)="onRowDoubleClick($event, line)">
+          <td>
+            <div class="account-search-wrapper" *ngIf="isLineEditable(line)">
+              <app-search-input
+                [searchConfig]="accountSearchConfig"
+                [displayField]="'description'"
+                [initialValue]="getAccountDisplayValue(line)"
+                placeholder="Buscar cuenta..."
+                (selectedField)="onAccountSelect($event, line)"
+                (clearField)="onAccountClear(line)">
+              </app-search-input>
+              <button type="button" class="btn-analysis" (click)="openAnalysisFromLine(line)">
+                Análisis
+              </button>
+            </div>
+            <input
+              *ngIf="isLineReadOnly(line)"
+              type="text"
+              [value]="getReadonlyAccountLabel(line)"
+              readonly
+              class="readonly-input"
+              placeholder="Doble click para editar" />
+          </td>
+          <td>
+            <input
+              type="text"
+              [value]="getReadonlyAuxLabel(line)"
+              [disabled]="isLineReadOnly(line)"
+              placeholder="Sin análisis por ficha" />
+          </td>
+          <td>
+            <input
+              type="text"
+              [value]="getReadonlyCostCenterLabel(line)"
+              [disabled]="isLineReadOnly(line)"
+              placeholder="Sin centro de costo" />
+          </td>
+          <td>
+            <ejs-numerictextbox
+              [(value)]="line.debit"
+              [width]="'100%'"
+              [min]="0"
+              [decimals]="2"
+              format="N2"
+              cssClass="amount-input"
+              [showSpinButton]="false"
+              [readonly]="isLineReadOnly(line)"
+              (change)="updateDecimalFieldFromNumeric(line, 'debit', $event)">
+            </ejs-numerictextbox>
+          </td>
+          <td>
+            <ejs-numerictextbox
+              [(value)]="line.credit"
+              [width]="'100%'"
+              [min]="0"
+              [decimals]="2"
+              format="N2"
+              cssClass="amount-input"
+              [showSpinButton]="false"
+              [readonly]="isLineReadOnly(line)"
+              (change)="updateDecimalFieldFromNumeric(line, 'credit', $event)">
+            </ejs-numerictextbox>
+          </td>
+          <td>
+            <input type="text" [ngModel]="line.detail" [disabled]="isLineReadOnly(line)" placeholder="Detalle"
+              (ngModelChange)="updateLineField(line, 'detail', $event)" />
+          </td>
+          <td class="actions-cell">
+            <button type="button" class="btn-save-line" *ngIf="isLineEditable(line)" (click)="saveLine(line)">Guardar</button>
+            <button type="button" class="btn-delete-line" *ngIf="isLineReadOnly(line)" (click)="deleteLine(line)">Eliminar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    
+  </div>
+
+  <ejs-dialog
+    [visible]="analysisDialogVisible"
+    [width]="'900px'"
+    [height]="'620px'"
+    [isModal]="true"
+    [allowDragging]="true"
+    [position]="{ X: 'center', Y: 'center' }"
+    header="Análisis de línea"
+    [showCloseIcon]="true"
+    [footerTemplate]="analysisDialogFooter"
+    (close)="closeAnalysisModal()">
+
+    <div class="analysis-modal-content">
+      <div class="analysis-container" *ngIf="analysisConfig.isAuxRequired">
+        <h4>{{ analysisAuxSectionTitle }}</h4>
+        <div class="analysis-row">
+          <label>{{ analysisAuxLabel }}</label>
+          <app-search-input
+            [searchConfig]="rutSearchConfig"
+            [displayField]="'name'"
+            [initialValue]="getAnalysisLine() ? getRutDisplayValue(getAnalysisLine()!) : null"
+            placeholder="Buscar ficha..."
+            (selectedField)="onRutSelect($event)"
+            (clearField)="onRutClear()">
+          </app-search-input>
+        </div>
+      </div>
+
+      <div class="analysis-container" *ngIf="analysisConfig.isDocumentRequired">
+        <h4>Por documento</h4>
+        <div class="analysis-document-grid">
+          <div class="analysis-row">
+            <label>Tipo de documento</label>
+            <ejs-dropdownlist
+              [dataSource]="documentTypes"
+              [fields]="documentTypeFields"
+              [value]="getAnalysisLine()?.documentType || null"
+              placeholder="Seleccione tipo"
+              (change)="onDocumentTypeChange($event?.value)">
+            </ejs-dropdownlist>
+          </div>
+
+          <div class="analysis-row">
+            <label>Número de documento</label>
+            <ejs-textbox
+              [value]="getAnalysisLine()?.documentNumber || ''"
+              placeholder="Ingrese número"
+              (change)="onDocumentNumberChange($event?.value || '')">
+            </ejs-textbox>
+          </div>
+
+          <div class="analysis-row">
+            <label>Fecha de documento</label>
+            <ejs-datepicker
+              [value]="getAnalysisDocumentDate()"
+              format="dd/MM/yyyy"
+              (change)="onDocumentDateChange($event)">
+            </ejs-datepicker>
+          </div>
+        </div>
+      </div>
+
+      <div class="analysis-container" *ngIf="analysisConfig.isCostCenterRequired">
+        <h4>Por centro de costo</h4>
+        <div class="analysis-row">
+          <label>Centro de costo</label>
+          <app-search-input
+            [searchConfig]="costCenterSearchConfig"
+            [displayField]="'module'"
+            [initialValue]="getAnalysisLine() ? getCostCenterDisplayValue(getAnalysisLine()!) : null"
+            placeholder="Buscar centro de costo..."
+            (selectedField)="onCostCenterSelect($event)"
+            (clearField)="onCostCenterClear()">
+          </app-search-input>
+        </div>
+      </div>
+    </div>
+  </ejs-dialog>
+
+  <ng-template #analysisDialogFooter>
+    <div class="analysis-actions">
+      <button type="button" class="btn-cancel" (click)="closeAnalysisModal()">Cancelar</button>
+      <button type="button" class="btn-select" (click)="confirmAnalysis()">Grabar</button>
+    </div>
+  </ng-template>
+
+  <div class="totals-container">
+    <div class="totals-row">
+      <div class="total-item">
+        <span class="label">Total Débito:</span>
+        <span class="value debit">{{ totalDebit | number:'1.2-2' }}</span>
+      </div>
+      <div class="total-item">
+        <span class="label">Total Crédito:</span>
+        <span class="value credit">{{ totalCredit | number:'1.2-2' }}</span>
+      </div>
+      <div class="total-item">
+        <span class="label">Diferencia:</span>
+        <span class="value" [ngClass]="{'balanced': isBalanced(), 'unbalanced': !isBalanced()}">
+          {{ difference | number:'1.2-2' }}
+        </span>
+      </div>
+    </div>
+    <div class="balance-status" *ngIf="isBalanced()">
+      <span class="e-icons e-check-circle"></span>
+      <span>El asiento está Cuadrado</span>
+    </div>
+    <div class="balance-status error" *ngIf="!isBalanced()">
+      <span class="e-icons e-close-circle"></span>
+      <span>El asiento NO está Cuadrado</span>
+    </div>
+  </div>
+</div>

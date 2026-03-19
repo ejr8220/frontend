@@ -10,6 +10,8 @@ export interface SearchInputConfig {
   columns: any[];
   method: string;
   params: any;
+  requestType?: 'GET' | 'POST';
+  body?: any;
   title?: string;
 }
 

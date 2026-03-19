@@ -1,0 +1,25 @@
+<div class="branch-container">
+  <h1>Sucursales</h1>
+
+  <div *ngIf="!currentCompanyId" class="empty-state">
+    Seleccione una empresa para visualizar sus sucursales.
+  </div>
+
+  <ejs-grid
+    *ngIf="currentCompanyId"
+    [dataSource]="dataSource"
+    [toolbar]="toolbar"
+    [allowPaging]="true"
+    [allowFiltering]="true"
+    [pageSettings]="pageSettings"
+    [filterSettings]="filterSettings"
+    [height]="'600px'"
+    (toolbarClick)="toolbarClick($event)">
+    <e-columns>
+      <e-column field="name" headerText="Nombre" width="180"></e-column>
+      <e-column field="countryId" headerText="País" width="170" [valueAccessor]="countryAccessor"></e-column>
+      <e-column field="provinceId" headerText="Provincia" width="170" [valueAccessor]="provinceAccessor"></e-column>
+      <e-column field="cityId" headerText="Ciudad" width="170" [valueAccessor]="cityAccessor"></e-column>
+    </e-columns>
+  </ejs-grid>
+</div>

@@ -16,6 +16,7 @@
     [visible]="showGridSearch"
     [width]="'900px'"
     [height]="'600px'"
+    [cssClass]="'grid-search-dialog'"
     [isModal]="true"
     [allowDragging]="true"
     [position]="{ X: 'center', Y: 'center' }"
@@ -23,12 +24,14 @@
     [footerTemplate]="dialogFooter"
     (close)="onGridSearchCancel()">
     @if (showGridSearch && searchConfig) {
-    <div class="grid-search-wrapper" style="padding: 8px; height: 100%; display: flex; flex-direction: column;">
+    <div class="grid-search-wrapper">
       <app-grid-search
         #gridSearch
         [columns]="searchConfig.columns"
         [method]="searchConfig.method"
+        [requestType]="searchConfig.requestType || 'GET'"
         [params]="searchConfig.params"
+        [body]="searchConfig.body"
         [title]="searchConfig.title || 'Registros Disponibles'"
         (onSelect)="onGridSearchSelect($event)"
         (onCancel)="onGridSearchCancel()">

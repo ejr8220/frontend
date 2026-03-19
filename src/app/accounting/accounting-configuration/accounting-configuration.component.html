@@ -1,0 +1,45 @@
+<div class="configuration-container">
+  <div class="configuration-header">
+    <h2>Configuración Contable</h2>
+  </div>
+
+  <div class="configuration-content">
+    <div class="configuration-card" *ngIf="companyId > 0; else noCompany">
+      <div class="loading" *ngIf="isLoading">Cargando configuración...</div>
+
+      <div class="fields-list" *ngIf="!isLoading">
+        <div class="field-group" *ngFor="let group of fieldGroups">
+          <h3 class="group-title">{{ group.title }}</h3>
+          <div class="group-fields">
+            <div class="field-item" *ngFor="let field of group.fields; trackBy: trackByField">
+              <label>{{ field.label }}</label>
+              <app-search-input
+                [searchConfig]="accountSearchConfig"
+                [displayField]="'description'"
+                [initialValue]="field.selectedAccount"
+                placeholder="Buscar cuenta..."
+                (selectedField)="onAccountSelected(field, $event)"
+                (clearField)="onAccountCleared(field)">
+              </app-search-input>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noCompany>
+      <div class="configuration-card empty-state">
+        No hay empresa seleccionada en sesión.
+      </div>
+    </ng-template>
+  </div>
+
+  <div class="floating-actions">
+    <button ejs-button cssClass="e-flat" (click)="loadConfiguration()" [disabled]="isLoading || companyId <= 0">
+      Recargar
+    </button>
+    <button ejs-button cssClass="e-primary" (click)="save()" [disabled]="isSaving || isLoading || companyId <= 0">
+      Guardar
+    </button>
+  </div>
+</div>

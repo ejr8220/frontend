@@ -1,0 +1,102 @@
+.configuration-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: calc(100vh - 64px);
+  padding: 12px 24px 80px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.configuration-header {
+  margin-bottom: 16px;
+}
+
+.configuration-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.configuration-content {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.configuration-card {
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.fields-list {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.group-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1976d2;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #e3f2fd;
+}
+
+.group-fields {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px 16px;
+}
+
+.field-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field-item label {
+  font-weight: 500;
+  font-size: 13px;
+  color: #424242;
+}
+
+.loading,
+.empty-state {
+  padding: 12px 0;
+}
+
+.floating-actions {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-end;
+  padding: 12px 24px;
+  border-top: 1px solid #e0e0e0;
+  background: #fff;
+}
+
+@media (max-width: 900px) {
+  .group-fields {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .group-fields {
+    grid-template-columns: 1fr;
+  }
+}

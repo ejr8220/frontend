@@ -44,6 +44,17 @@ export class SidebarComponent {
             ]
           },
           {
+            id: 'transacciones-general',
+            name: 'Transacciones',
+            children: [
+              {
+                id: 'rut-transacciones',
+                name: 'Rut',
+                route: '/general/transacciones/rut'
+              }
+            ]
+          },
+          {
             id: 'reportes',
             name: 'Reportes',
             children: [
@@ -79,6 +90,59 @@ export class SidebarComponent {
                 id: 'centro-costos',
                 name: 'Centro de Costos',
                 route: '/accounting/cost-center'
+              },
+              {
+                id: 'configuracion-contable',
+                name: 'Configuración Contable',
+                route: '/accounting/accounting-configuration'
+              }
+            ]
+          },
+          {
+            id: 'transacciones',
+            name: 'Transacciones',
+            children: [
+              {
+                id: 'diarios-contables',
+                name: 'Diarios Contables',
+                route: '/accounting/journal'
+              }
+            ]
+          },
+          {
+            id: 'procesos-contabilidad',
+            name: 'Procesos',
+            children: [
+              {
+                id: 'integracion-contable',
+                name: 'Integración contable',
+                route: '/accounting/accounting-integration'
+              }
+            ]
+          },
+          {
+            id: 'reportes-contabilidad',
+            name: 'Reportes',
+            children: [
+              {
+                id: 'balance-general-8-columnas',
+                name: 'Balance General de 8 Columnas',
+                route: '/accounting/reports/balance-general-8-columnas'
+              },
+              {
+                id: 'balance-comprobacion',
+                name: 'Balance de Comprobación',
+                route: '/accounting/reports/balance-comprobacion'
+              },
+              {
+                id: 'asientos-diario-reporte',
+                name: 'Asientos de Diario',
+                route: '/accounting/reports/asientos-diario'
+              },
+              {
+                id: 'libro-mayor',
+                name: 'Libro Mayor',
+                route: '/accounting/reports/libro-mayor'
               }
             ]
           }

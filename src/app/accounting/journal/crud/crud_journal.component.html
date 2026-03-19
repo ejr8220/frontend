@@ -1,0 +1,41 @@
+<div class="crud-journal-container" *ngIf="!isLoading; else loadingState">
+  <div class="page-header">
+    <h1>{{ isEditMode ? 'Editar Diario Contable' : 'Nuevo Diario Contable' }}</h1>
+  </div>
+
+  <div class="crud-content">
+    <!-- Componente de Cabecera -->
+    <app-journal-crud-head
+      [journalData]="journalData"
+      [isEditMode]="isEditMode"
+      (headDataChange)="onHeadDataChange($event)"
+      (cloneJournal)="onCloneJournalSelected($event)">
+    </app-journal-crud-head>
+
+    <!-- Componente de Detalles -->
+    <app-journal-crud-details
+      [journalData]="journalData"
+      [isEditMode]="isEditMode"
+      (detailsChange)="onDetailsChange($event)">
+    </app-journal-crud-details>
+  </div>
+
+  <div class="floating-actions">
+    <button ejs-button cssClass="e-flat" (click)="onCancel()" [disabled]="isLoading">
+      Cancelar
+    </button>
+    <button ejs-button cssClass="e-info" *ngIf="isEditMode" (click)="onPrint()" [disabled]="isLoading">
+      Imprimir
+    </button>
+    <button ejs-button cssClass="e-primary" (click)="onSave()" [disabled]="isLoading">
+      {{ isEditMode ? 'Actualizar' : 'Guardar' }}
+    </button>
+  </div>
+</div>
+
+<ng-template #loadingState>
+  <div class="loading-container">
+    <div class="spinner"></div>
+    <p>Cargando...</p>
+  </div>
+</ng-template>

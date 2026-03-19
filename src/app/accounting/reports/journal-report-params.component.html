@@ -1,0 +1,50 @@
+<div class="journal-report-container">
+  <h2>Reporte Asiento de Diarios</h2>
+
+  <div class="report-form-card">
+    <div class="form-grid">
+      <div class="form-field">
+        <label>Empresa</label>
+        <ejs-textbox [value]="companyId" [readonly]="true"></ejs-textbox>
+      </div>
+
+      <div class="form-field">
+        <label>Tipo de Comprobante</label>
+        <ejs-dropdownlist
+          [dataSource]="voucherTypes"
+          [fields]="{ text: 'name', value: 'id' }"
+          [(value)]="voucherTypeId"
+          placeholder="Seleccione un tipo">
+        </ejs-dropdownlist>
+      </div>
+
+      <div class="form-field">
+        <label>Diario Desde</label>
+        <ejs-numerictextbox
+          [(value)]="journalFrom"
+          [min]="1"
+          [decimals]="0"
+          format="N0"
+          [showSpinButton]="false">
+        </ejs-numerictextbox>
+      </div>
+
+      <div class="form-field">
+        <label>Diario Hasta</label>
+        <ejs-numerictextbox
+          [(value)]="journalTo"
+          [min]="1"
+          [decimals]="0"
+          format="N0"
+          [showSpinButton]="false">
+        </ejs-numerictextbox>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button ejs-button cssClass="e-primary" (click)="openReport()">
+        Ver reporte
+      </button>
+    </div>
+  </div>
+</div>
